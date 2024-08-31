@@ -1,8 +1,9 @@
 # chatApp
-add ollama folder to main directory. (https://github.com/ollama/ollama)
+1) add ollama folder to main directory. (https://github.com/ollama/ollama)
 
-you can create your own model with "ollama create -f add/directory/filename"
-define your model on responder/main.py
+2) you can create your own model with "ollama create -f add/directory/filename"
 
-to start server from terminal:
+3) define your model on responder/main.py
+
+4) to start server from terminal:
 "python chat.py"
