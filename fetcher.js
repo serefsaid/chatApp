@@ -7,5 +7,5 @@ async function sendMessage(last_prompt,messages) {
         body: JSON.stringify({ last_prompt: last_prompt,messages:messages })
     });
     const data = await response.json();
-    return data.response;
+    return data;
 }
