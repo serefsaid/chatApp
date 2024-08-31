@@ -10,8 +10,8 @@ CORS(app)  # Tüm rotalarda CORS'u etkinleştirir
 def chat():
     last_prompt = request.json.get('last_prompt')
     messages = request.json.get('messages')
-    response_message = f"{get_response(last_prompt,messages)}"
-    return jsonify({'response': response_message})
+    response = get_response(last_prompt,messages)
+    return jsonify({'message': response['message']['content'],'model':response['model']})#,'date':response['created_at']
 
 if __name__ == '__main__':
     app.run(port=5000)
