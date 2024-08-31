@@ -4,7 +4,6 @@ async function handleSend() {
     chatBox.innerHTML += `<p>User: <span class="user_message">${userInput}</span></p>`;
     const messages = create_messages_json();
     const botResponse = await sendMessage(userInput,messages);
-    console.log(botResponse);
 
     chatBox.innerHTML += `<p>${botResponse.model}: <span class="ai_message">${botResponse.message}</span></p>`;
 }
@@ -20,4 +19,3 @@ function create_messages_json(){
     })
     return messages
 }
-console.log(".")
