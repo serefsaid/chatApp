@@ -20,3 +20,4 @@ function create_messages_json(){
     })
     return messages
 }
+console.log(".")
