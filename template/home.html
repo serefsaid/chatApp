@@ -8,7 +8,7 @@
         <h1>AI Chat Bots</h1>
         <ul>
             {% for bot_name in bot_names %}
-            <li>{{ bot_name }}</li>
+            <li><a href="/chat/{{ bot_name }}">{{ bot_name }}</a></li>
             {% endfor %}
         </ul>
     </div>
