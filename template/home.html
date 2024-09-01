@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <div id="chat-bots">
+        <h1>AI Chat Bots</h1>
+        <ul>
+            {% for bot_name in bot_names %}
+            <li>{{ bot_name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='js/fetcher.js') }}"></script>
+</body>
+</html>
