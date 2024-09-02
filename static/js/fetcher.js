@@ -1,6 +1,6 @@
 async function sendMessage(last_prompt,messages) {
     const bot_nickname = window.location.pathname.split('/')[2];
-    const response = await fetch('http://localhost:5000/responder', {
+    const response = await fetch(window.location.origin+'/responder', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

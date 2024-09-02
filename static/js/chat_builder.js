@@ -28,12 +28,16 @@ document.addEventListener("keypress", (event)=>{
     }
 });
 function get_current_time(){
-    const now = new Date();
+    const dateObj = new Date();
 
-   const hours = now.getHours();
-    const minutes = now.getMinutes();
+    const day = dateObj.getDate();
+    const month = dateObj.getMonth() + 1;
+    const year = dateObj.getFullYear();
+    const hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes();
+    const seconds = dateObj.getSeconds();
 
-   return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 function iso_to_regular_date(isoDate){
     const dateObj = new Date(isoDate);
@@ -48,6 +52,25 @@ function iso_to_regular_date(isoDate){
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 const ai_data = get_data('bot_data_hidden');
+function generating_animation(type='open'){
+    if(type=='open'){
+        const chatBox = document.getElementsByClassName('chat-area-main')[0];
+        chatBox.innerHTML += `
+        <div class="chat-msg" id="generating_animation">
+            <div class="chat-msg-profile">
+                <img class="chat-msg-img" src="${ai_data.image_url}" alt="" />
+                <div class="chat-msg-date">generating..</div>
+            </div>
+            <div class="chat-msg-content">
+                <div class="chat-msg-text">...</div>
+            </div>
+        </div>
+        `;
+    }else{
+        document.getElementById('generating_animation').remove();
+    }
+    return 0;
+}
 async function handleSend() {
     const userInput = document.getElementById('user-input').value;
     const chatBox = document.getElementsByClassName('chat-area-main')[0];
@@ -59,7 +82,9 @@ async function handleSend() {
     chatBox.innerHTML += message_maker(own_message_data,true);
     document.getElementById('user-input').value = '';//empty the input
     const messages = create_messages_json();
+    generating_animation();
     const botResponse = await sendMessage(userInput,messages);
+    generating_animation('close');
     own_message_data = {
         "message":botResponse.message.content
         ,"image_url":ai_data.image_url
