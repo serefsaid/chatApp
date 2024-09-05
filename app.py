@@ -7,8 +7,10 @@ import ollama
 app = Flask(__name__, template_folder='template')
 CORS(app)
 
-sys.path.insert(1, 'helpers')
-from chatbot import get_bot_data
+sys.path.insert(1, 'database')
+from chatbot_db import get_bot_data
+from chat_db import insert_message
+from users import add_to_used_chatbots,get_my_used_chatbots
 
 @app.route('/')
 def index():
@@ -22,7 +24,9 @@ def index():
 @app.route('/chat/<bot_nickname>')
 def chat(bot_nickname):
     bot_data = get_bot_data(bot_nickname)
-    data = {"bot_data":bot_data}
+    add_to_used_chatbots(bot_data["_id"])
+    used_chatbots = get_my_used_chatbots()
+    data = {"bot_data":bot_data,"used_chatbots":used_chatbots}
     return render_template('chat.html',data=data)
 
 @app.route('/responder', methods=['POST'])
@@ -32,6 +36,7 @@ def responder():
         messages = request.json.get('messages')
         bot_nickname = request.json.get('bot_nickname')
         response = get_response(messages,bot_nickname)
+        insert_message(last_prompt,response)
         return jsonify({'message': response.get('message', 'No message'), 'model': response.get('model', 'unknown'), 'created_at': response.get('created_at', 'unknown')})
     except Exception as e:
         return jsonify({'message': 'Error occurred', 'model': 'unknown'})

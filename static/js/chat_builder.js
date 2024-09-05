@@ -17,8 +17,8 @@ function message_maker(data,owner=false){
     </div>
     `;
 }
-function get_data(id){
-    let data_txt = document.getElementById(id).value;
+function get_data(){
+    let data_txt = document.getElementById("bot_data_hidden").value;
     data_txt = data_txt.replace(/'/g, '"');
     return JSON.parse(data_txt);
 }
@@ -51,7 +51,7 @@ function iso_to_regular_date(isoDate){
 
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
-const ai_data = get_data('bot_data_hidden');
+const ai_data = get_data();
 function generating_animation(type='open'){
     if(type=='open'){
         const chatBox = document.getElementsByClassName('chat-area-main')[0];
