@@ -1,14 +1,42 @@
+const userInput = document.getElementById('user-input');
+const conversationArea = document.getElementsByClassName('conversation-area')[0];
+const chatBox = document.getElementsByClassName('chat-area-main')[0];
+function get_data(){
+    let data_txt = document.getElementById("bot_data_hidden").value;
+    data_txt = data_txt.replace(/'/g, '"');
+    return JSON.parse(data_txt);
+}
+const ai_data = get_data();
+function chat_maker(data,active=false){
+    let active_str = active ? 'active' : '';
+    return `
+    <div onclick="window.location.href=window.location.origin+'/chat/${data.nickname}'" class="msg `+active_str+`">
+        <img class="msg-profile" src="${data.image_url}" alt="" />
+        <div class="msg-detail">
+            <div class="msg-username">${data.name}</div>
+            <div class="msg-content">
+                <span class="msg-message">Today</span>
+                <span class="msg-date" style="display:none">20m</span>
+            </div>
+        </div>
+    </div>
+    `;
+}
 function message_maker(data,owner=false){
     let owner_text = '';
     let message_class = ' ai_message ';
+    let image_url = '';
     if(owner){
+        image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
         owner_text = ' owner ';
         message_class = ' owner_message ';
+    }else{
+        image_url = ai_data.image_url;
     }
     return `
     <div class="chat-msg `+owner_text+`">
         <div class="chat-msg-profile">
-            <img class="chat-msg-img" src="${data.image_url}" alt="" />
+            <img class="chat-msg-img" src="${image_url}" alt="" />
             <div class="chat-msg-date">Message sent ${data.date}</div>
         </div>
         <div class="chat-msg-content">
@@ -16,11 +44,6 @@ function message_maker(data,owner=false){
         </div>
     </div>
     `;
-}
-function get_data(){
-    let data_txt = document.getElementById("bot_data_hidden").value;
-    data_txt = data_txt.replace(/'/g, '"');
-    return JSON.parse(data_txt);
 }
 document.addEventListener("keypress", (event)=>{
     if(event.key=='Enter'){
@@ -51,10 +74,8 @@ function iso_to_regular_date(isoDate){
 
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
-const ai_data = get_data();
 function generating_animation(type='open'){
     if(type=='open'){
-        const chatBox = document.getElementsByClassName('chat-area-main')[0];
         chatBox.innerHTML += `
         <div class="chat-msg" id="generating_animation">
             <div class="chat-msg-profile">
@@ -71,26 +92,29 @@ function generating_animation(type='open'){
     }
     return 0;
 }
+function add_message(data,owner=false){
+    chatBox.innerHTML += message_maker(data,owner);
+}
+function add_chat(data,active=false){
+    conversationArea.innerHTML = chat_maker(data,active)+conversationArea.innerHTML;
+}
 async function handleSend() {
-    const userInput = document.getElementById('user-input').value;
-    const chatBox = document.getElementsByClassName('chat-area-main')[0];
+    let userInputValue = userInput.value
     own_message_data = {
-        "message":userInput
-        ,"image_url":'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png'
+        "message":userInputValue
         ,"date":get_current_time()
     };
-    chatBox.innerHTML += message_maker(own_message_data,true);
+    add_message(own_message_data,true);
     document.getElementById('user-input').value = '';//empty the input
     const messages = create_messages_json();
     generating_animation();
-    const botResponse = await sendMessage(userInput,messages);
+    const botResponse = await sendMessage(userInputValue,messages,own_message_data.date);
     generating_animation('close');
-    own_message_data = {
+    ai_message_data = {
         "message":botResponse.message.content
-        ,"image_url":ai_data.image_url
         ,"date":iso_to_regular_date(botResponse.created_at)
     };
-    chatBox.innerHTML += message_maker(own_message_data);
+    add_message(ai_message_data);
 }
 function create_messages_json(){
     const owner_messages = Array.prototype.slice.call( document.getElementsByClassName("owner_message") )

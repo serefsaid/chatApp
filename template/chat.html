@@ -34,18 +34,6 @@
 </div>
 <div class="wrapper">
     <div class="conversation-area">
-        {% for used_chatbot in data.used_chatbots %}
-        <div onclick="window.location.href=window.location.origin+'/chat/{{used_chatbot.nickname}}'" class="msg {{ 'active' if data.bot_data.nickname==used_chatbot.nickname else '' }}">
-            <img class="msg-profile" src="{{used_chatbot.image_url}}" alt="" />
-            <div class="msg-detail">
-                <div class="msg-username">{{used_chatbot.name}}</div>
-                <div class="msg-content">
-                    <span class="msg-message">Today</span>
-                    <span class="msg-date" style="display:none">20m</span>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
         <button class="add" style="visibility: hidden;"></button>
         <div class="overlay"></div>
     </div>
@@ -82,6 +70,26 @@
 </script>
 <script src="{{ url_for('static', filename='js/fetcher.js') }}"></script>
 <script src="{{ url_for('static', filename='js/chat_builder.js') }}"></script>
+<script>
+    const initialMessages = {{ data.chat_history | tojson }};
+    initialMessages.forEach(initialMessage => {        
+        add_message({
+            date:initialMessage.date
+            ,message:initialMessage.message
+        },true);//owner message
+        add_message({
+            date:iso_to_regular_date(initialMessage.response.created_at)
+            ,message:initialMessage.response.message.content
+        });//ai data
+    });
+
+    const initialChats = {{ data.used_chatbots | tojson }};
+    const currentChatbot = location.pathname.split('/').pop();
+    initialChats.forEach(initialChat => {
+        let isActive = currentChatbot===initialChat.nickname
+        add_chat(initialChat,isActive)
+    });
+</script>
 
 </body>
 </html>

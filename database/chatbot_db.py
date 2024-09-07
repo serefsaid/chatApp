@@ -1,9 +1,16 @@
+from dotenv import load_dotenv,find_dotenv
+import os
+import pprint
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import json
 from bson import ObjectId
+from flask import session
 
-uri = "mongodb+srv://admin:admin@cluster0.gkcrc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+load_dotenv(find_dotenv())
+
+mongo_password = os.environ.get("MONGODB_PWD")
+uri = f"mongodb+srv://admin:{mongo_password}@cluster0.gkcrc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 
